@@ -24,7 +24,9 @@ import DevDocs from 'devdocs';
 
 const TIME_EXCLUDED_SCREENS_FILTER = 'woocommerce_admin_time_excluded_screens';
 
-const getPages = () => {
+export const PAGES_FILTER = 'woocommerce_admin_pages_list';
+
+export const getPages = () => {
 	const pages = [];
 
 	if ( window.wcAdminFeatures.devdocs ) {
@@ -66,10 +68,10 @@ const getPages = () => {
 		} );
 	}
 
-	return pages;
+	return applyFilters( PAGES_FILTER, pages );
 };
 
-class Controller extends Component {
+export class Controller extends Component {
 	componentDidMount() {
 		window.document.documentElement.scrollTop = 0;
 	}
@@ -189,9 +191,9 @@ window.wpNavMenuUrlUpdate = function( page, query ) {
 	] );
 	const nextQuery = stringifyQuery( getPersistedQuery( query ) );
 
-	Array.from(
-		document.querySelectorAll( '#adminmenu a' )
-	).forEach( item => updateLinkHref( item, nextQuery, excludedScreens ) );
+	Array.from( document.querySelectorAll( '#adminmenu a' ) ).forEach( item =>
+		updateLinkHref( item, nextQuery, excludedScreens )
+	);
 };
 
 // When the route changes, we need to update wp-admin's menu with the correct section & current link
@@ -231,5 +233,3 @@ window.wpNavMenuClassChange = function( page, url ) {
 	const wpWrap = document.querySelector( '#wpwrap' );
 	wpWrap.classList.remove( 'wp-responsive-open' );
 };
-
-export { Controller, getPages };

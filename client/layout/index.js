@@ -3,6 +3,7 @@
  * External dependencies
  */
 import { Component, Fragment } from '@wordpress/element';
+import { useFilters } from '@woocommerce/components';
 import { Router, Route, Switch } from 'react-router-dom';
 import { Slot } from 'react-slot-fill';
 import PropTypes from 'prop-types';
@@ -17,7 +18,7 @@ import { getHistory } from '@woocommerce/navigation';
  * Internal dependencies
  */
 import './style.scss';
-import { Controller, getPages } from './controller';
+import { Controller, getPages, PAGES_FILTER } from './controller';
 import Header from 'header';
 import Notices from './notices';
 import { recordPageView } from 'lib/tracks';
@@ -95,7 +96,7 @@ Layout.propTypes = {
 	isEmbedded: PropTypes.bool,
 };
 
-export class PageLayout extends Component {
+class _PageLayout extends Component {
 	render() {
 		return (
 			<Router history={ getHistory() }>
@@ -109,6 +110,7 @@ export class PageLayout extends Component {
 		);
 	}
 }
+export const PageLayout = useFilters( PAGES_FILTER )( _PageLayout );
 
 export class EmbedLayout extends Component {
 	render() {
