@@ -4,6 +4,7 @@
  */
 import { __, _n, _x } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 
 /**
  * WooCommerce dependencies
@@ -28,7 +29,7 @@ export default class StockReportTable extends Component {
 	}
 
 	getHeadersContent() {
-		return [
+		return applyFilters( 'woocommerce_admin_stock_table_column_header', [
 			{
 				label: __( 'Product / Variation', 'woocommerce-admin' ),
 				key: 'title',
@@ -52,7 +53,7 @@ export default class StockReportTable extends Component {
 				key: 'stock_quantity',
 				isSortable: true,
 			},
-		];
+		] );
 	}
 
 	getRowsContent( products ) {
@@ -93,24 +94,30 @@ export default class StockReportTable extends Component {
 				</Link>
 			);
 
-			return [
-				{
-					display: nameLink,
-					value: name,
-				},
-				{
-					display: sku,
-					value: sku,
-				},
-				{
-					display: stockStatusLink,
-					value: stock_status,
-				},
-				{
-					display: manage_stock ? numberFormat( stock_quantity ) : __( 'N/A', 'woocommerce-admin' ),
-					value: stock_quantity,
-				},
-			];
+			return applyFilters(
+				'woocommerce_admin_stock_table_row_content',
+				[
+					{
+						display: nameLink,
+						value: name,
+					},
+					{
+						display: sku,
+						value: sku,
+					},
+					{
+						display: stockStatusLink,
+						value: stock_status,
+					},
+					{
+						display: manage_stock
+							? numberFormat( stock_quantity )
+							: __( 'N/A', 'woocommerce-admin' ),
+						value: stock_quantity,
+					},
+				],
+				product
+			);
 		} );
 	}
 

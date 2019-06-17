@@ -5,6 +5,7 @@
 import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { map } from 'lodash';
+import { applyFilters } from '@wordpress/hooks';
 
 /**
  * WooCommerce dependencies
@@ -31,7 +32,7 @@ export default class OrdersReportTable extends Component {
 	}
 
 	getHeadersContent() {
-		return [
+		return applyFilters( 'woocommerce_admin_orders_table_column_header', [
 			{
 				label: __( 'Date', 'woocommerce-admin' ),
 				key: 'date',
@@ -87,7 +88,7 @@ export default class OrdersReportTable extends Component {
 				isSortable: true,
 				isNumeric: true,
 			},
-		];
+		] );
 	}
 
 	getCustomerType( customerType ) {
@@ -138,67 +139,71 @@ export default class OrdersReportTable extends Component {
 				} ),
 			} ) );
 
-			return [
-				{
-					display: <Date date={ date_created } visibleFormat={ defaultTableDateFormat } />,
-					value: date_created,
-				},
-				{
-					display: (
-						<Link
-							href={
-								'post.php?post=' +
-								( parent_id ? parent_id : order_id ) +
-								'&action=edit' +
-								( parent_id ? '#order_refunds' : '' )
-							}
-							type="wp-admin"
-						>
-							{ order_number }
-						</Link>
-					),
-					value: order_number,
-				},
-				{
-					display: (
-						<OrderStatus className="woocommerce-orders-table__status" order={ { status } } />
-					),
-					value: status,
-				},
-				{
-					display: this.getCustomerType( customer_type ),
-					value: customer_type,
-				},
-				{
-					display: this.renderList(
-						formattedProducts.length ? [ formattedProducts[ 0 ] ] : [],
-						formattedProducts.map( product => ( {
-							label: sprintf(
-								__( '%s× %s', 'woocommerce-admin' ),
-								product.quantity,
-								product.label
-							),
-							href: product.href,
-						} ) )
-					),
-					value: formattedProducts.map( product => product.label ).join( ' ' ),
-				},
-				{
-					display: numberFormat( num_items_sold ),
-					value: num_items_sold,
-				},
-				{
-					display: this.renderList(
-						formattedCoupons.length ? [ formattedCoupons[ 0 ] ] : [],
-						formattedCoupons
-					),
-					value: formattedCoupons.map( item => item.code ).join( ' ' ),
-				},
-				{
-					display: renderCurrency( net_total, currency ),
-					value: net_total,
-				},
-			];
+			return applyFilters(
+				'woocommerce_admin_orders_table_row_content',
+				[
+					{
+						display: <Date date={ date_created } visibleFormat={ defaultTableDateFormat } />,
+						value: date_created,
+					},
+					{
+						display: (
+							<Link
+								href={
+									'post.php?post=' +
+									( parent_id ? parent_id : order_id ) +
+									'&action=edit' +
+									( parent_id ? '#order_refunds' : '' )
+								}
+								type="wp-admin"
+							>
+								{ order_number }
+							</Link>
+						),
+						value: order_number,
+					},
+					{
+						display: (
+							<OrderStatus className="woocommerce-orders-table__status" order={ { status } } />
+						),
+						value: status,
+					},
+					{
+						display: this.getCustomerType( customer_type ),
+						value: customer_type,
+					},
+					{
+						display: this.renderList(
+							formattedProducts.length ? [ formattedProducts[ 0 ] ] : [],
+							formattedProducts.map( product => ( {
+								label: sprintf(
+									__( '%s× %s', 'woocommerce-admin' ),
+									product.quantity,
+									product.label
+								),
+								href: product.href,
+							} ) )
+						),
+						value: formattedProducts.map( product => product.label ).join( ' ' ),
+					},
+					{
+						display: numberFormat( num_items_sold ),
+						value: num_items_sold,
+					},
+					{
+						display: this.renderList(
+							formattedCoupons.length ? [ formattedCoupons[ 0 ] ] : [],
+							formattedCoupons
+						),
+						value: formattedCoupons.map( item => item.code ).join( ' ' ),
+					},
+					{
+						display: renderCurrency( net_total, currency ),
+						value: net_total,
+					},
+				],
+				row
+			);
 		} );
 	}
 

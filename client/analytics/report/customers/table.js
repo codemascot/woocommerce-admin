@@ -5,6 +5,7 @@
 import { __, _n } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { Tooltip } from '@wordpress/components';
+import { applyFilters } from '@wordpress/hooks';
 
 /**
  * WooCommerce dependencies
@@ -29,7 +30,7 @@ export default class CustomersReportTable extends Component {
 	}
 
 	getHeadersContent() {
-		return [
+		return applyFilters( 'woocommerce_admin_customers_table_column_header', [
 			{
 				label: __( 'Name', 'woocommerce-admin' ),
 				key: 'name',
@@ -89,7 +90,7 @@ export default class CustomersReportTable extends Component {
 				key: 'postal_code',
 				hiddenByDefault: true,
 			},
-		];
+		] );
 	}
 
 	getCountryName( code ) {
@@ -139,54 +140,58 @@ export default class CustomersReportTable extends Component {
 				</Fragment>
 			);
 
-			return [
-				{
-					display: customerNameLink,
-					value: name,
-				},
-				{
-					display: username,
-					value: username,
-				},
-				{
-					display: date_last_active && (
-						<Date date={ date_last_active } visibleFormat={ defaultTableDateFormat } />
-					),
-					value: date_last_active,
-				},
-				{
-					display: dateRegistered,
-					value: date_registered,
-				},
-				{
-					display: <a href={ 'mailto:' + email }>{ email }</a>,
-					value: email,
-				},
-				{
-					display: numberFormat( orders_count ),
-					value: orders_count,
-				},
-				{
-					display: formatCurrency( total_spend ),
-					value: getCurrencyFormatDecimal( total_spend ),
-				},
-				{
-					display: formatCurrency( avg_order_value ),
-					value: getCurrencyFormatDecimal( avg_order_value ),
-				},
-				{
-					display: countryDisplay,
-					value: country,
-				},
-				{
-					display: city,
-					value: city,
-				},
-				{
-					display: postcode,
-					value: postcode,
-				},
-			];
+			return applyFilters(
+				'woocommerce_admin_customers_table_row_content',
+				[
+					{
+						display: customerNameLink,
+						value: name,
+					},
+					{
+						display: username,
+						value: username,
+					},
+					{
+						display: date_last_active && (
+							<Date date={ date_last_active } visibleFormat={ defaultTableDateFormat } />
+						),
+						value: date_last_active,
+					},
+					{
+						display: dateRegistered,
+						value: date_registered,
+					},
+					{
+						display: <a href={ 'mailto:' + email }>{ email }</a>,
+						value: email,
+					},
+					{
+						display: numberFormat( orders_count ),
+						value: orders_count,
+					},
+					{
+						display: formatCurrency( total_spend ),
+						value: getCurrencyFormatDecimal( total_spend ),
+					},
+					{
+						display: formatCurrency( avg_order_value ),
+						value: getCurrencyFormatDecimal( avg_order_value ),
+					},
+					{
+						display: countryDisplay,
+						value: country,
+					},
+					{
+						display: city,
+						value: city,
+					},
+					{
+						display: postcode,
+						value: postcode,
+					},
+				],
+				customer
+			);
 		} );
 	}
 

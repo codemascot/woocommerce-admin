@@ -6,6 +6,7 @@ import { __, _n } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { map } from 'lodash';
+import { applyFilters } from '@wordpress/hooks';
 
 /**
  * WooCommerce dependencies
@@ -30,7 +31,7 @@ class CategoriesReportTable extends Component {
 	}
 
 	getHeadersContent() {
-		return [
+		return applyFilters( 'woocommerce_admin_categories_table_column_header', [
 			{
 				label: __( 'Category', 'woocommerce-admin' ),
 				key: 'category',
@@ -64,7 +65,7 @@ class CategoriesReportTable extends Component {
 				isSortable: true,
 				isNumeric: true,
 			},
-		];
+		] );
 	}
 
 	getRowsContent( categoryStats ) {
@@ -74,40 +75,44 @@ class CategoriesReportTable extends Component {
 			const category = categories.get( category_id );
 			const persistedQuery = getPersistedQuery( query );
 
-			return [
-				{
-					display: (
-						<CategoryBreacrumbs query={ query } category={ category } categories={ categories } />
-					),
-					value: category && category.name,
-				},
-				{
-					display: numberFormat( items_sold ),
-					value: items_sold,
-				},
-				{
-					display: renderCurrency( net_revenue ),
-					value: getCurrencyFormatDecimal( net_revenue ),
-				},
-				{
-					display: category && (
-						<Link
-							href={ getNewPath( persistedQuery, '/analytics/categories', {
-								filter: 'single_category',
-								categories: category.id,
-							} ) }
-							type="wc-admin"
-						>
-							{ numberFormat( products_count ) }
-						</Link>
-					),
-					value: products_count,
-				},
-				{
-					display: numberFormat( orders_count ),
-					value: orders_count,
-				},
-			];
+			return applyFilters(
+				'woocommerce_admin_categories_table_row_content',
+				[
+					{
+						display: (
+							<CategoryBreacrumbs query={ query } category={ category } categories={ categories } />
+						),
+						value: category && category.name,
+					},
+					{
+						display: numberFormat( items_sold ),
+						value: items_sold,
+					},
+					{
+						display: renderCurrency( net_revenue ),
+						value: getCurrencyFormatDecimal( net_revenue ),
+					},
+					{
+						display: category && (
+							<Link
+								href={ getNewPath( persistedQuery, '/analytics/categories', {
+									filter: 'single_category',
+									categories: category.id,
+								} ) }
+								type="wc-admin"
+							>
+								{ numberFormat( products_count ) }
+							</Link>
+						),
+						value: products_count,
+					},
+					{
+						display: numberFormat( orders_count ),
+						value: orders_count,
+					},
+				],
+				categoryStat
+			);
 		} );
 	}
 
