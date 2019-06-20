@@ -6,7 +6,6 @@ import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { map } from 'lodash';
-import { applyFilters } from '@wordpress/hooks';
 
 /**
  * WooCommerce dependencies
@@ -34,68 +33,65 @@ class ProductsReportTable extends Component {
 	}
 
 	getHeadersContent() {
-		return applyFilters(
-			'woocommerce_admin_products_table_column_header',
-			[
-				{
-					label: __( 'Product Title', 'woocommerce-admin' ),
-					key: 'product_name',
-					required: true,
-					isLeftAligned: true,
-					isSortable: true,
-				},
-				{
-					label: __( 'SKU', 'woocommerce-admin' ),
-					key: 'sku',
-					hiddenByDefault: true,
-					isSortable: true,
-				},
-				{
-					label: __( 'Items Sold', 'woocommerce-admin' ),
-					key: 'items_sold',
-					required: true,
-					defaultSort: true,
-					isSortable: true,
-					isNumeric: true,
-				},
-				{
-					label: __( 'N. Revenue', 'woocommerce-admin' ),
-					screenReaderLabel: __( 'Net Revenue', 'woocommerce-admin' ),
-					key: 'net_revenue',
-					required: true,
-					isSortable: true,
-					isNumeric: true,
-				},
-				{
-					label: __( 'Orders', 'woocommerce-admin' ),
-					key: 'orders_count',
-					isSortable: true,
-					isNumeric: true,
-				},
-				{
-					label: __( 'Category', 'woocommerce-admin' ),
-					key: 'product_cat',
-				},
-				{
-					label: __( 'Variations', 'woocommerce-admin' ),
-					key: 'variations',
-					isSortable: true,
-				},
-				'yes' === wcSettings.manageStock
-					? {
-							label: __( 'Status', 'woocommerce-admin' ),
-							key: 'stock_status',
-						}
-					: null,
-				'yes' === wcSettings.manageStock
-					? {
-							label: __( 'Stock', 'woocommerce-admin' ),
-							key: 'stock',
-							isNumeric: true,
-						}
-					: null,
-			].filter( Boolean )
-		);
+		return [
+			{
+				label: __( 'Product Title', 'woocommerce-admin' ),
+				key: 'product_name',
+				required: true,
+				isLeftAligned: true,
+				isSortable: true,
+			},
+			{
+				label: __( 'SKU', 'woocommerce-admin' ),
+				key: 'sku',
+				hiddenByDefault: true,
+				isSortable: true,
+			},
+			{
+				label: __( 'Items Sold', 'woocommerce-admin' ),
+				key: 'items_sold',
+				required: true,
+				defaultSort: true,
+				isSortable: true,
+				isNumeric: true,
+			},
+			{
+				label: __( 'N. Revenue', 'woocommerce-admin' ),
+				screenReaderLabel: __( 'Net Revenue', 'woocommerce-admin' ),
+				key: 'net_revenue',
+				required: true,
+				isSortable: true,
+				isNumeric: true,
+			},
+			{
+				label: __( 'Orders', 'woocommerce-admin' ),
+				key: 'orders_count',
+				isSortable: true,
+				isNumeric: true,
+			},
+			{
+				label: __( 'Category', 'woocommerce-admin' ),
+				key: 'product_cat',
+			},
+			{
+				label: __( 'Variations', 'woocommerce-admin' ),
+				key: 'variations',
+				isSortable: true,
+			},
+			'yes' === wcSettings.manageStock
+				? {
+						label: __( 'Status', 'woocommerce-admin' ),
+						key: 'stock_status',
+					}
+				: null,
+			'yes' === wcSettings.manageStock
+				? {
+						label: __( 'Stock', 'woocommerce-admin' ),
+						key: 'stock',
+						isNumeric: true,
+					}
+				: null,
+		].filter( Boolean );
 	}
 
 	getRowsContent( data = [] ) {
@@ -139,87 +135,80 @@ class ProductsReportTable extends Component {
 				stockStatuses[ stock_status ]
 			);
 
-			return applyFilters(
-				'woocommerce_admin_products_table_row_content',
-				[
-					{
-						display: (
-							<Link href={ productDetailLink } type="wc-admin">
-								{ name }
-							</Link>
-						),
-						value: name,
-					},
-					{
-						display: sku,
-						value: sku,
-					},
-					{
-						display: numberFormat( items_sold ),
-						value: items_sold,
-					},
-					{
-						display: renderCurrency( net_revenue ),
-						value: getCurrencyFormatDecimal( net_revenue ),
-					},
-					{
-						display: (
-							<Link href={ ordersLink } type="wc-admin">
-								{ orders_count }
-							</Link>
-						),
-						value: orders_count,
-					},
-					{
-						display: (
-							<div className="woocommerce-table__product-categories">
-								{ productCategories[ 0 ] && (
-									<CategoryBreacrumbs
-										category={ productCategories[ 0 ] }
-										categories={ categories }
-									/>
-								) }
-								{ productCategories.length > 1 && (
-									<Tag
-										label={ sprintf(
-											_x( '+%d more', 'categories', 'woocommerce-admin' ),
-											productCategories.length - 1
-										) }
-										popoverContents={ productCategories.map( category => (
-											<CategoryBreacrumbs
-												category={ category }
-												categories={ categories }
-												key={ category.id }
-												query={ query }
-											/>
-										) ) }
-									/>
-								) }
-							</div>
-						),
-						value: productCategories.map( category => category.name ).join( ', ' ),
-					},
-					{
-						display: numberFormat( variations.length ),
-						value: variations.length,
-					},
-					'yes' === wcSettings.manageStock
-						? {
-								display: manage_stock ? stockStatus : __( 'N/A', 'woocommerce-admin' ),
-								value: manage_stock ? stockStatuses[ stock_status ] : null,
-							}
-						: null,
-					'yes' === wcSettings.manageStock
-						? {
-								display: manage_stock
-									? numberFormat( stock_quantity )
-									: __( 'N/A', 'woocommerce-admin' ),
-								value: stock_quantity,
-							}
-						: null,
-				].filter( Boolean ),
-				row
-			);
+			return [
+				{
+					display: (
+						<Link href={ productDetailLink } type="wc-admin">
+							{ name }
+						</Link>
+					),
+					value: name,
+				},
+				{
+					display: sku,
+					value: sku,
+				},
+				{
+					display: numberFormat( items_sold ),
+					value: items_sold,
+				},
+				{
+					display: renderCurrency( net_revenue ),
+					value: getCurrencyFormatDecimal( net_revenue ),
+				},
+				{
+					display: (
+						<Link href={ ordersLink } type="wc-admin">
+							{ orders_count }
+						</Link>
+					),
+					value: orders_count,
+				},
+				{
+					display: (
+						<div className="woocommerce-table__product-categories">
+							{ productCategories[ 0 ] && (
+								<CategoryBreacrumbs category={ productCategories[ 0 ] } categories={ categories } />
+							) }
+							{ productCategories.length > 1 && (
+								<Tag
+									label={ sprintf(
+										_x( '+%d more', 'categories', 'woocommerce-admin' ),
+										productCategories.length - 1
+									) }
+									popoverContents={ productCategories.map( category => (
+										<CategoryBreacrumbs
+											category={ category }
+											categories={ categories }
+											key={ category.id }
+											query={ query }
+										/>
+									) ) }
+								/>
+							) }
+						</div>
+					),
+					value: productCategories.map( category => category.name ).join( ', ' ),
+				},
+				{
+					display: numberFormat( variations.length ),
+					value: variations.length,
+				},
+				'yes' === wcSettings.manageStock
+					? {
+							display: manage_stock ? stockStatus : __( 'N/A', 'woocommerce-admin' ),
+							value: manage_stock ? stockStatuses[ stock_status ] : null,
+						}
+					: null,
+				'yes' === wcSettings.manageStock
+					? {
+							display: manage_stock
+								? numberFormat( stock_quantity )
+								: __( 'N/A', 'woocommerce-admin' ),
+							value: stock_quantity,
+						}
+					: null,
+			].filter( Boolean );
 		} );
 	}
 
