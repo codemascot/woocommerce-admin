@@ -5,7 +5,6 @@
 import { __, _n } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { map } from 'lodash';
-import { applyFilters } from '@wordpress/hooks';
 
 /**
  * WooCommerce dependencies
@@ -30,7 +29,7 @@ export default class TaxesReportTable extends Component {
 	}
 
 	getHeadersContent() {
-		return applyFilters( 'woocommerce_admin_taxes_table_column_header', [
+		return [
 			{
 				label: __( 'Tax Code', 'woocommerce-admin' ),
 				key: 'tax_code',
@@ -67,7 +66,7 @@ export default class TaxesReportTable extends Component {
 				isSortable: true,
 				isNumeric: true,
 			},
-		] );
+		];
 	}
 
 	getRowsContent( taxes ) {
@@ -82,36 +81,32 @@ export default class TaxesReportTable extends Component {
 				</Link>
 			);
 
-			return applyFilters(
-				'woocommerce_admin_taxes_table_row_content',
-				[
-					{
-						display: taxLink,
-						value: taxCode,
-					},
-					{
-						display: tax_rate.toFixed( 2 ) + '%',
-						value: tax_rate,
-					},
-					{
-						display: renderCurrency( total_tax ),
-						value: getCurrencyFormatDecimal( total_tax ),
-					},
-					{
-						display: renderCurrency( order_tax ),
-						value: getCurrencyFormatDecimal( order_tax ),
-					},
-					{
-						display: renderCurrency( shipping_tax ),
-						value: getCurrencyFormatDecimal( shipping_tax ),
-					},
-					{
-						display: numberFormat( orders_count ),
-						value: orders_count,
-					},
-				],
-				tax
-			);
+			return [
+				{
+					display: taxLink,
+					value: taxCode,
+				},
+				{
+					display: tax_rate.toFixed( 2 ) + '%',
+					value: tax_rate,
+				},
+				{
+					display: renderCurrency( total_tax ),
+					value: getCurrencyFormatDecimal( total_tax ),
+				},
+				{
+					display: renderCurrency( order_tax ),
+					value: getCurrencyFormatDecimal( order_tax ),
+				},
+				{
+					display: renderCurrency( shipping_tax ),
+					value: getCurrencyFormatDecimal( shipping_tax ),
+				},
+				{
+					display: numberFormat( orders_count ),
+					value: orders_count,
+				},
+			];
 		} );
 	}
 

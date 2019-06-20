@@ -6,7 +6,6 @@ import { __, _n } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { map } from 'lodash';
 import moment from 'moment';
-import { applyFilters } from '@wordpress/hooks';
 
 /**
  * WooCommerce dependencies
@@ -31,7 +30,7 @@ export default class CouponsReportTable extends Component {
 	}
 
 	getHeadersContent() {
-		return applyFilters( 'woocommerce_admin_downloads_table_column_header', [
+		return [
 			{
 				label: __( 'Date', 'woocommerce-admin' ),
 				key: 'date',
@@ -63,7 +62,7 @@ export default class CouponsReportTable extends Component {
 				label: __( 'IP', 'woocommerce-admin' ),
 				key: 'ip_address',
 			},
-		] );
+		];
 	}
 
 	getRowsContent( downloads ) {
@@ -89,48 +88,44 @@ export default class CouponsReportTable extends Component {
 				products: product_id,
 			} );
 
-			return applyFilters(
-				'woocommerce_admin_downloads_table_row_content',
-				[
-					{
-						display: <Date date={ date } visibleFormat={ defaultTableDateFormat } />,
-						value: date,
-					},
-					{
-						display: (
-							<Link href={ productLink } type="wc-admin">
-								{ productName }
-							</Link>
-						),
-						value: productName,
-					},
-					{
-						display: (
-							<Link href={ file_path } type="external">
-								{ file_name }
-							</Link>
-						),
-						value: file_name,
-					},
-					{
-						display: (
-							<Link href={ `post.php?post=${ order_id }&action=edit` } type="wp-admin">
-								{ order_number }
-							</Link>
-						),
-						value: order_number,
-					},
-					{
-						display: username,
-						value: username,
-					},
-					{
-						display: ip_address,
-						value: ip_address,
-					},
-				],
-				download
-			);
+			return [
+				{
+					display: <Date date={ date } visibleFormat={ defaultTableDateFormat } />,
+					value: date,
+				},
+				{
+					display: (
+						<Link href={ productLink } type="wc-admin">
+							{ productName }
+						</Link>
+					),
+					value: productName,
+				},
+				{
+					display: (
+						<Link href={ file_path } type="external">
+							{ file_name }
+						</Link>
+					),
+					value: file_name,
+				},
+				{
+					display: (
+						<Link href={ `post.php?post=${ order_id }&action=edit` } type="wp-admin">
+							{ order_number }
+						</Link>
+					),
+					value: order_number,
+				},
+				{
+					display: username,
+					value: username,
+				},
+				{
+					display: ip_address,
+					value: ip_address,
+				},
+			];
 		} );
 	}
 

@@ -7,7 +7,6 @@ import { Component } from '@wordpress/element';
 import { format as formatDate } from '@wordpress/date';
 import { compose } from '@wordpress/compose';
 import { get } from 'lodash';
-import { applyFilters } from '@wordpress/hooks';
 
 /**
  * WooCommerce dependencies
@@ -34,7 +33,7 @@ class RevenueReportTable extends Component {
 	}
 
 	getHeadersContent() {
-		return applyFilters( 'woocommerce_admin_revenue_table_column_header', [
+		return [
 			{
 				label: __( 'Date', 'woocommerce-admin' ),
 				key: 'date',
@@ -92,7 +91,7 @@ class RevenueReportTable extends Component {
 				isSortable: true,
 				isNumeric: true,
 			},
-		] );
+		];
 	}
 
 	getRowsContent( data = [] ) {
@@ -117,44 +116,40 @@ class RevenueReportTable extends Component {
 					{ numberFormat( orders_count ) }
 				</Link>
 			);
-			return applyFilters(
-				'woocommerce_admin_revenue_table_row_content',
-				[
-					{
-						display: <Date date={ row.date_start } visibleFormat={ defaultTableDateFormat } />,
-						value: row.date_start,
-					},
-					{
-						display: orderLink,
-						value: Number( orders_count ),
-					},
-					{
-						display: renderCurrency( gross_revenue ),
-						value: getCurrencyFormatDecimal( gross_revenue ),
-					},
-					{
-						display: formatCurrency( refunds ),
-						value: getCurrencyFormatDecimal( refunds ),
-					},
-					{
-						display: formatCurrency( coupons ),
-						value: getCurrencyFormatDecimal( coupons ),
-					},
-					{
-						display: renderCurrency( taxes ),
-						value: getCurrencyFormatDecimal( taxes ),
-					},
-					{
-						display: renderCurrency( shipping ),
-						value: getCurrencyFormatDecimal( shipping ),
-					},
-					{
-						display: renderCurrency( net_revenue ),
-						value: getCurrencyFormatDecimal( net_revenue ),
-					},
-				],
-				row
-			);
+			return [
+				{
+					display: <Date date={ row.date_start } visibleFormat={ defaultTableDateFormat } />,
+					value: row.date_start,
+				},
+				{
+					display: orderLink,
+					value: Number( orders_count ),
+				},
+				{
+					display: renderCurrency( gross_revenue ),
+					value: getCurrencyFormatDecimal( gross_revenue ),
+				},
+				{
+					display: formatCurrency( refunds ),
+					value: getCurrencyFormatDecimal( refunds ),
+				},
+				{
+					display: formatCurrency( coupons ),
+					value: getCurrencyFormatDecimal( coupons ),
+				},
+				{
+					display: renderCurrency( taxes ),
+					value: getCurrencyFormatDecimal( taxes ),
+				},
+				{
+					display: renderCurrency( shipping ),
+					value: getCurrencyFormatDecimal( shipping ),
+				},
+				{
+					display: renderCurrency( net_revenue ),
+					value: getCurrencyFormatDecimal( net_revenue ),
+				},
+			];
 		} );
 	}
 

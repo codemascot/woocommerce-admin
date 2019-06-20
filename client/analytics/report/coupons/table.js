@@ -5,7 +5,6 @@
 import { __, _n } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { map } from 'lodash';
-import { applyFilters } from '@wordpress/hooks';
 
 /**
  * WooCommerce dependencies
@@ -31,7 +30,7 @@ export default class CouponsReportTable extends Component {
 	}
 
 	getHeadersContent() {
-		return applyFilters( 'woocommerce_admin_coupons_table_column_header', [
+		return [
 			{
 				label: __( 'Coupon Code', 'woocommerce-admin' ),
 				key: 'code',
@@ -65,7 +64,7 @@ export default class CouponsReportTable extends Component {
 				label: __( 'Type', 'woocommerce-admin' ),
 				key: 'type',
 			},
-		] );
+		];
 	}
 
 	getRowsContent( coupons ) {
@@ -97,40 +96,36 @@ export default class CouponsReportTable extends Component {
 				</Link>
 			);
 
-			return applyFilters(
-				'woocommerce_admin_coupons_table_row_content',
-				[
-					{
-						display: couponLink,
-						value: code,
-					},
-					{
-						display: ordersLink,
-						value: orders_count,
-					},
-					{
-						display: formatCurrency( amount ),
-						value: getCurrencyFormatDecimal( amount ),
-					},
-					{
-						display: <Date date={ date_created } visibleFormat={ defaultTableDateFormat } />,
-						value: date_created,
-					},
-					{
-						display: date_expires ? (
-							<Date date={ date_expires } visibleFormat={ defaultTableDateFormat } />
-						) : (
-							__( 'N/A', 'woocommerce-admin' )
-						),
-						value: date_expires,
-					},
-					{
-						display: this.getCouponType( discount_type ),
-						value: discount_type,
-					},
-				],
-				coupon
-			);
+			return [
+				{
+					display: couponLink,
+					value: code,
+				},
+				{
+					display: ordersLink,
+					value: orders_count,
+				},
+				{
+					display: formatCurrency( amount ),
+					value: getCurrencyFormatDecimal( amount ),
+				},
+				{
+					display: <Date date={ date_created } visibleFormat={ defaultTableDateFormat } />,
+					value: date_created,
+				},
+				{
+					display: date_expires ? (
+						<Date date={ date_expires } visibleFormat={ defaultTableDateFormat } />
+					) : (
+						__( 'N/A', 'woocommerce-admin' )
+					),
+					value: date_expires,
+				},
+				{
+					display: this.getCouponType( discount_type ),
+					value: discount_type,
+				},
+			];
 		} );
 	}
 
