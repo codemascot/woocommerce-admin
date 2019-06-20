@@ -34,7 +34,7 @@ add_action( 'admin_enqueue_scripts', 'table_column_register_script' );
 /**
  * Extended attributes can be used to obtain any attribute from a WC_Product instance that is
  * available by a `get_*` class method. In other words, we can add `average_rating` because
- * `get_average_rating` is an available method on a WC_Productn instance.
+ * `get_average_rating` is an available method on a WC_Product instance.
  *
  * @param array $extended_attributes - Extra information from WC_Product instance.
  * @return array - Extended attributes.
